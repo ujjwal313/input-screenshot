@@ -7,11 +7,13 @@ const PORT = 3500;
 
 const autoScroll = async (page) => {
   await page.evaluate(async () => {
-    await new Promise((resolve, reject) => {
+    await new Promise
+    ((resolve, reject) => {
       let totalHeight = 0;
       let distance = 100;
       let timer = setInterval(() => {
         let scrollHeight = document.body.scrollHeight;
+        sleep(2000);
         window.scrollBy(0, distance);
         totalHeight += distance;
 
@@ -24,16 +26,15 @@ const autoScroll = async (page) => {
   });
 };
 
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 app.get("/screenshot", cors(), async (req, res) => {
+  console.log("api calld");
   try {
     const browser = await puppeteer.launch({
-      headless: false,
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--window-size=1536,972",
-      ],
-      timeout: 100000,
+    headless: false
     });
 
     const page = await browser.newPage();
@@ -45,25 +46,18 @@ app.get("/screenshot", cors(), async (req, res) => {
     //   bounds: { windowState: "minimized" },
     // });
 
-    await page.setUserAgent(
-      "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36"
-    );
+    await page.setViewport({ width: 1280, height: 720 });
 
     await page.goto(decodeURIComponent(req.query.url), {
       waitUntil: "networkidle2",
       timeout: 0,
     });
-    await page.waitForNavigation();
-
-    await page.setViewport({
-      width: 1536,
-      height: 972,
-    });
+    // await page.waitForNavigation();
 
     await autoScroll(page);
 
     const screenshot = await page.screenshot({
-      //   path: "fullpage.png",
+        path: "fullpage.png",
       fullPage: true,
     });
 
