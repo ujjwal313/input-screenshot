@@ -13,7 +13,7 @@ const autoScroll = async (page) => {
       let distance = 100;
       let timer = setInterval(() => {
         let scrollHeight = document.body.scrollHeight;
-        sleep(2000);
+        // sleep(2000);
         window.scrollBy(0, distance);
         totalHeight += distance;
 
@@ -21,7 +21,7 @@ const autoScroll = async (page) => {
           clearInterval(timer);
           resolve();
         }
-      }, 100);
+      }, 1000);
     });
   });
 };
@@ -46,10 +46,10 @@ app.get("/screenshot", cors(), async (req, res) => {
     //   bounds: { windowState: "minimized" },
     // });
 
-    await page.setViewport({ width: 1280, height: 720 });
+    await page.setViewport({ width: 1280, height: 720, deviceScaleFactor: 0 });
 
     await page.goto(decodeURIComponent(req.query.url), {
-      waitUntil: "networkidle2",
+      waitUntil: "networkidle0",
       timeout: 0,
     });
     // await page.waitForNavigation();
